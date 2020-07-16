@@ -1,6 +1,6 @@
 # xgboost-scorer
 
-**xgboost-scorer** is a pure JavaScript scoring function implementation for [XGBoost](https://github.com/dmlc/xgboost) models, for use in a Node.js environment or even in a browser.
+**xgboost-scorer** is a pure JavaScript scoring function implementation for [XGBoost](https://github.com/dmlc/xgboost) models, for use in a Node.js environment or a browser.
 
 **NOTE:**  This implementation is an extremely naive one, that will most likely not work well with large inputs. Also, it doesn't handle all scenarios (currently only works for binary classification, but can be easily extended for other types of tasks). If performance is a big concern, consider using the [xgboost-node](https://github.com/nuanio/xgboost-node) package instead, which is a [Node.js addon](https://nodejs.org/api/addons.html) that invokes the actual XGBoost scoring function. However, you might have to compile the package for your specific platform (e.g., Windows), which could be *a bit of a problem*. So, if you don't care about serving a million QPS, are working with small models and inputs; and want to run in multiple hostile environments (e.g., in the browser), then this package might be of use to you.
 
@@ -22,7 +22,7 @@
             featureB: 0.1,
             categoricalFeatureC: 1.0
 	    })
-    scorePromise.then(console.log); // E.g., 0.42
+    console.log(score); // E.g., 0.42
 
 ## Documentation
 A scorer is created by specifying the XGBoost model to use, in JSON. You can either create it using a JSON file on disk (in Node.js-like environments) or by passing in the JSON object directly (in the browser, for instance):
@@ -44,8 +44,8 @@ A scorer is created by specifying the XGBoost model to use, in JSON. You can eit
 
 This will handle most use-cases that require scoring in an online setting. For offline scoring, you would typically have your input data to be scored in a file in [LibSVM format](https://xgboost.readthedocs.io/en/latest/tutorials/input_format.html), and this is where the feature index comes in:
 
-    const scorer = Scorer.create('/path/to/xgboost.model.json', '/path/to/feature_index.json')
-    scorer.score('/path/to/data.libsvm');
+    const scorer = await Scorer.create('/path/to/xgboost.model.json', '/path/to/feature_index.json')
+    const score = await scorer.score('/path/to/data.libsvm');
 
 The feature index is required to provide a mapping between the feature names (present in your JSON model dump) and the feature indices (used in the LibSVM file).
 
